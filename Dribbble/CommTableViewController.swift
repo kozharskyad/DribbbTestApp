@@ -30,6 +30,9 @@ class CommTableViewController: UIViewController, UITableViewDelegate, UITableVie
     var dts = [String]()
     var comms = [String]()
     
+    @IBAction func postButtonTap(_ sender: AnyObject) {
+    }
+    
     @IBAction func backButtonTap(_ sender: AnyObject) {
         navigationController?.popViewController(animated: true)
     }
