@@ -25,6 +25,7 @@ class SessionViewController: UITableViewController {
     var descriptions = [String]()
     var images = [String]()
     var shotIds = [Int]()
+    var fromComm: Bool = false
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -75,6 +76,13 @@ class SessionViewController: UITableViewController {
     }
     
     func loadRecentShots() {
+        // Проверка на переход из вью комментариев. Без неё таблица шотов обновляется при возврате
+        guard !self.fromComm else {
+            self.fromComm = false
+            return
+        }
+        // **********
+        
         let loadingNotif = MBProgressHUD.showAdded(to: self.view, animated: true)
         loadingNotif.label.text = "Loading recent shots"
         
@@ -113,12 +121,6 @@ class SessionViewController: UITableViewController {
                 if let shotId = shot["id"] as? Int {
                     self.shotIds.append(shotId)
                 }
-//                    DribbApiManager.inst.getShotComments(shotId: shotId, completion: { (result) -> Void in
-//                        print("COMMENTS FOR \(shotId):\n\(result)")
-//                    })
-//                } else {
-//                    print("NOCOMM \(shot)")
-//                }
             }
             self.tableView.reloadData()
             loadingNotif.hide(animated: true, afterDelay: 0)
@@ -136,6 +138,7 @@ class SessionViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         CommTableViewController.shotId = self.shotIds[indexPath.row]
         CommTableViewController.shotImage = self.images[indexPath.row]
+        self.fromComm = true
         performSegue(withIdentifier: "shotToComm", sender: self)
     }
 }
