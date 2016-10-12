@@ -99,7 +99,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="86" sectionHeaderHeight="28" sectionFooterHeight="28" id="btX-Or-AUL">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="86" sectionHeaderHeight="28" sectionFooterHeight="28" id="btX-Or-AUL">
                                 <frame key="frameInset" minX="-1" minY="320" maxX="1" maxY="48"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
@@ -184,6 +184,7 @@
                     </view>
                     <navigationItem key="navigationItem" id="hVd-U0-CJZ"/>
                     <connections>
+                        <outlet property="commentField" destination="4lw-MI-ljn" id="0p8-DV-tQO"/>
                         <outlet property="shotPreview" destination="deR-8f-aIM" id="4vn-je-eGl"/>
                         <outlet property="tableView" destination="btX-Or-AUL" id="Wms-Oa-Zpi"/>
                     </connections>

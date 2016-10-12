@@ -19,6 +19,7 @@ class CommCustomCell: UITableViewCell {
 class CommTableViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     @IBOutlet var tableView: UITableView!
     @IBOutlet weak var shotPreview: UIImageView!
+    @IBOutlet weak var commentField: UITextField!
     
     static let inst = CommTableViewController()
     
@@ -31,6 +32,9 @@ class CommTableViewController: UIViewController, UITableViewDelegate, UITableVie
     var comms = [String]()
     
     @IBAction func postButtonTap(_ sender: AnyObject) {
+        DribbApiManager.inst.sendComment(shotId: CommTableViewController.shotId, text: commentField.text!, completion: { (result) -> Void in
+                print(result)
+        })
     }
     
     @IBAction func backButtonTap(_ sender: AnyObject) {
@@ -39,12 +43,22 @@ class CommTableViewController: UIViewController, UITableViewDelegate, UITableVie
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.hideKeyboardWhenTappedAround()
         shotPreview.sd_setImage(with: NSURL(string: CommTableViewController.shotImage) as! URL)
         loadComments()
     }
 
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        NotificationCenter.default.addObserver(self, selector: #selector(CommTableViewController.keyboardWillShow(notification:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(CommTableViewController.keyboardWillHide(notification:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        NotificationCenter.default.removeObserver(self)
     }
     
     internal func tableView(_ tableView:UITableView, numberOfRowsInSection section:Int) -> Int {
@@ -56,7 +70,6 @@ class CommTableViewController: UIViewController, UITableViewDelegate, UITableVie
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
         let cell:CommCustomCell = tableView.dequeueReusableCell(withIdentifier: "CommCell") as! CommCustomCell
         cell.name.text = self.names[indexPath.row].stripHTML()
         cell.avatar.sd_setImage(with: NSURL(string: self.avatars[indexPath.row]) as! URL)
@@ -69,6 +82,33 @@ class CommTableViewController: UIViewController, UITableViewDelegate, UITableVie
         
     }
     
+    func animateViewMoving(up:Bool, moveValue :CGFloat){
+        let movementDuration:TimeInterval = 0.5
+        let movement:CGFloat = (up ? -moveValue : moveValue)
+        UIView.beginAnimations("animateView", context: nil)
+        UIView.setAnimationBeginsFromCurrentState(true)
+        UIView.setAnimationDuration(movementDuration )
+        self.view.frame = self.view.frame.offsetBy(dx: 0,  dy: movement)
+        UIView.commitAnimations()
+    }
+    
+    
+    func keyboardWillShow(notification: NSNotification) {
+        let info = notification.userInfo!
+        if let keyboardSize = (info[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
+            let contentInsets = UIEdgeInsets(top: 0, left: 0, bottom: keyboardSize.height, right: 0)
+            animateViewMoving(up: true, moveValue: contentInsets.bottom)
+        }
+    }
+    
+    func keyboardWillHide(notification: NSNotification) {
+        let info = notification.userInfo!
+        if let keyboardSize = (info[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue {
+            let contentInsets = UIEdgeInsets(top: 0, left: 0, bottom: keyboardSize.height, right: 0)
+            animateViewMoving(up: false, moveValue: contentInsets.bottom)
+        }
+    }
+    
     func loadComments() {
         DribbApiManager.inst.getShotComments(shotId: CommTableViewController.shotId, completion: { (result) -> Void in
             if (result?.count)! > 0 {
@@ -76,7 +116,6 @@ class CommTableViewController: UIViewController, UITableViewDelegate, UITableVie
                 self.avatars.removeAll(keepingCapacity: false)
                 self.comms.removeAll(keepingCapacity: false)
                 self.dts.removeAll(keepingCapacity: false)
-//                self.tableView.reloadData()
 
                 for commDict in (result as? [[String:Any]])! {
                     if let userDict = commDict["user"] as? NSDictionary {
