@@ -132,4 +132,19 @@ class DribbApiManager {
                 }
         }
     }
+    
+    func sendComment(shotId: Int, text: String, completion: @escaping (NSDictionary?) -> ()) {
+        let auth_header = [ "Authorization": "Bearer " + self.OAuthToken! ]
+        let reqURL: String = self.apiURL + "/shots/" + String(shotId) + "/comments"
+        let params: Parameters = [
+            "body": text
+        ]
+        Alamofire.request(reqURL, method: .post, parameters: params, headers: auth_header)
+            .responseJSON{response in
+                if let result = response.result.value {
+                    let JSON = result as? NSDictionary
+                    completion(JSON)
+                }
+        }
+    }
 }
