@@ -102,16 +102,14 @@ class DribbApiManager {
         return false
     }
     
-    func getUserInfo(username: String) {
+    func getUserInfo(username: String, completion: @escaping ([String: AnyObject]?) -> ()) {
         let auth_header = [ "Authorization": "Bearer " + self.OAuthToken! ]
         let reqURL: String = self.apiURL + "/users/" + username
         Alamofire.request(reqURL, headers: auth_header)
             .responseJSON{response in
                 if let result = response.result.value {
-                    let JSON = result as! NSDictionary
-                    if let completionHandler = self.Complete {
-                        completionHandler(JSON)
-                    }
+                    let JSON = result as! [String: AnyObject]
+                    completion(JSON)
                 }
         }
     }

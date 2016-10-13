@@ -86,13 +86,13 @@ class CommTableViewController: UIViewController, UITableViewDelegate, UITableVie
     func cellAction(sender: UITapGestureRecognizer) {
         let tapLoc = sender.location(in: self.tableView)
         let indexPath = self.tableView.indexPathForRow(at: tapLoc)
-//        let cell: CommCustomCell = self.tableView.cellForRow(at: indexPath!) as! CommCustomCell
-        print(self.usernames[(indexPath?.row)!])
+        ProfileViewController.username = self.usernames[(indexPath?.row)!]
+        performSegue(withIdentifier: "commToProfile", sender: self)
     }
     
     func animateViewMoving(up: Bool, moveValue: CGFloat){
-        let movementDuration:TimeInterval = up ? 0.4 : 0.2
-        let movement:CGFloat = (up ? -moveValue : moveValue)
+        let movementDuration: TimeInterval = up ? 0.4 : 0.2
+        let movement: CGFloat = (up ? -moveValue : moveValue)
         UIView.beginAnimations("animateView", context: nil)
         UIView.setAnimationBeginsFromCurrentState(true)
         UIView.setAnimationDuration(movementDuration )

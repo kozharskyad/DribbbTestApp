@@ -100,15 +100,15 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="86" sectionHeaderHeight="28" sectionFooterHeight="28" id="btX-Or-AUL">
-                                <frame key="frameInset" minX="-2" minY="320" maxY="49"/>
+                                <frame key="frameInset" minX="-2" minY="319" maxX="1" maxY="50"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
                                     <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="CommCell" rowHeight="86" id="cPj-n3-gWh" customClass="CommCustomCell" customModule="Dribbble" customModuleProvider="target">
-                                        <rect key="frame" x="0.0" y="28" width="322" height="86"/>
+                                        <rect key="frame" x="0.0" y="28" width="321" height="86"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="cPj-n3-gWh" id="ohY-rN-bbc">
-                                            <frame key="frameInset" width="322" height="86"/>
+                                            <frame key="frameInset" width="321" height="85"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
                                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" id="lJR-7f-Kzl">
@@ -216,17 +216,29 @@
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="UserInfo" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="JOs-TZ-NSQ">
                                 <frame key="frameInset" minX="16" minY="234" width="288" height="29"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="mmi-pu-ydh">
+                                <frame key="frameInset" minX="16" minY="271" width="135" height="30"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <state key="normal" title="Likes ( "/>
+                                <connections>
+                                    <action selector="likesButtonTap:" destination="dZv-88-e6Y" eventType="touchUpInside" id="Q5R-uc-Cbh"/>
+                                </connections>
+                            </button>
                             <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="ei6-gf-cj9">
-                                <frame key="frameInset" minX="184" minY="271" width="120" height="30"/>
+                                <frame key="frameInset" minX="169" minY="271" width="135" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Followers ( "/>
+                                <connections>
+                                    <action selector="followersButtonTap:" destination="dZv-88-e6Y" eventType="touchUpInside" id="OMj-Ep-Owz"/>
+                                </connections>
                             </button>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="YNf-bV-ocP">
-                                <frame key="frameInset" minY="309" width="320" height="259"/>
+                                <frame key="frameInset" minY="337" width="320" height="231"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
@@ -245,22 +257,32 @@
                                 </connections>
                             </tableView>
                             <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="HvC-aC-VA6">
-                                <frame key="frameInset" minX="16" minY="20" width="46" height="30"/>
+                                <frame key="frameInset" minY="20" width="46" height="30"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <state key="normal" title="Back"/>
+                                <connections>
+                                    <action selector="backButtonTap:" destination="dZv-88-e6Y" eventType="touchUpInside" id="yt5-3a-n3K"/>
+                                </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="mmi-pu-ydh">
-                                <frame key="frameInset" minX="16" minY="271" width="120" height="30"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="ListLabel" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="0Bw-ty-Ryk">
+                                <frame key="frameInset" minX="16" minY="309" width="288" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <color key="backgroundColor" red="0.52117937250000002" green="0.73288751939999996" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
-                                <state key="normal" title="Likes ( ">
-                                    <color key="titleColor" cocoaTouchSystemColor="darkTextColor"/>
-                                </state>
-                            </button>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
                     <navigationItem key="navigationItem" id="tJr-cY-VQl"/>
+                    <connections>
+                        <outlet property="listLabel" destination="0Bw-ty-Ryk" id="M3N-tc-3cM"/>
+                        <outlet property="userAvatar" destination="zyf-Kp-uPT" id="NtX-b5-oPa"/>
+                        <outlet property="userFollowersButton" destination="ei6-gf-cj9" id="KJh-LN-Jme"/>
+                        <outlet property="userInfoLabel" destination="JOs-TZ-NSQ" id="vVz-LD-0Lp"/>
+                        <outlet property="userLikesButton" destination="mmi-pu-ydh" id="X2U-Uv-fd5"/>
+                        <outlet property="userNameLabel" destination="THb-dY-Mqr" id="Ioe-9D-gvW"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="udc-z4-jAt" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
