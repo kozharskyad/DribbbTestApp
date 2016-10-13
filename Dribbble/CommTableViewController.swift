@@ -77,7 +77,17 @@ class CommTableViewController: UIViewController, UITableViewDelegate, UITableVie
         cell.avatar.sd_setImage(with: NSURL(string: self.avatars[indexPath.row]) as! URL)
         cell.comm.text = self.comms[indexPath.row].stripHTML()
         cell.dt.text = self.dts[indexPath.row].stripHTML()
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(CommTableViewController.cellAction))
+        cell.addGestureRecognizer(tap)
+        tap.cancelsTouchesInView = false
         return cell
+    }
+    
+    func cellAction(sender: UITapGestureRecognizer) {
+        let tapLoc = sender.location(in: self.tableView)
+        let indexPath = self.tableView.indexPathForRow(at: tapLoc)
+//        let cell: CommCustomCell = self.tableView.cellForRow(at: indexPath!) as! CommCustomCell
+        print(self.usernames[(indexPath?.row)!])
     }
     
     func animateViewMoving(up: Bool, moveValue: CGFloat){
@@ -106,10 +116,7 @@ class CommTableViewController: UIViewController, UITableViewDelegate, UITableVie
             animateViewMoving(up: false, moveValue: contentInsets.bottom)
         }
     }
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("TEST")
-    }
-    
+
     func loadComments() {
         DribbApiManager.inst.getShotComments(shotId: CommTableViewController.shotId, completion: { (result) -> Void in
             if (result?.count)! > 0 {
@@ -132,7 +139,7 @@ class CommTableViewController: UIViewController, UITableViewDelegate, UITableVie
                             print("NO NAME")
                         }
                         
-                        if let username = userDict["name"] {
+                        if let username = userDict["username"] {
                             self.usernames.append(username as! String)
                         } else {
                             print("NO USERNAME")
