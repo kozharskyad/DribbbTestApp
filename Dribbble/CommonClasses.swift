@@ -118,8 +118,12 @@ class DribbApiManager {
     
     func getRecentShots() {
         let auth_header = [ "Authorization": "Bearer " + self.OAuthToken! ]
-        let reqURL: String = self.apiURL + "/shots?list=attachments&sort=recent"
-        Alamofire.request(reqURL, headers: auth_header)
+        let reqURL: String = self.apiURL + "/shots"
+        let params: Parameters = [
+            "list": "shots",
+            "sort": "popular"
+        ]
+        Alamofire.request(reqURL, parameters: params, headers: auth_header)
             .responseJSON{response in
                 if let result = response.result.value {
                     let JSON = result as! NSArray
@@ -151,11 +155,12 @@ class DribbApiManager {
             "body": text
         ]
         Alamofire.request(reqURL, method: .post, parameters: params, headers: auth_header)
-            .responseJSON{response in
-                if let result = response.result.value {
-                    let JSON = result as? NSDictionary
-                    completion(JSON)
-                }
+            .responseString{response in
+                print(response)
+//                if let result = response.result.value {
+//                    let JSON = result as? NSDictionary
+//                    completion(JSON)
+//                }
         }
     }
 }

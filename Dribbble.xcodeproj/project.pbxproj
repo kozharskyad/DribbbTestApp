@@ -17,6 +17,7 @@
 		E8214C491D9DAA850045F1B9 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8214C481D9DAA850045F1B9 /* LoginViewController.swift */; };
 		E8214C4B1D9DADF60045F1B9 /* CommonClasses.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8214C4A1D9DADF60045F1B9 /* CommonClasses.swift */; };
 		E8214C511D9EEC0E0045F1B9 /* OAuthViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8214C501D9EEC0E0045F1B9 /* OAuthViewController.swift */; };
+		E867B2AC1DAFF6B1005DAFB5 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E867B2AB1DAFF6B1005DAFB5 /* ProfileViewController.swift */; };
 		E87563711DAD48AE00D676F7 /* CommTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E87563701DAD48AE00D676F7 /* CommTableViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -35,6 +36,7 @@
 		E8214C481D9DAA850045F1B9 /* LoginViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		E8214C4A1D9DADF60045F1B9 /* CommonClasses.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommonClasses.swift; sourceTree = "<group>"; };
 		E8214C501D9EEC0E0045F1B9 /* OAuthViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OAuthViewController.swift; sourceTree = "<group>"; };
+		E867B2AB1DAFF6B1005DAFB5 /* ProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		E87563701DAD48AE00D676F7 /* CommTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CommTableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -93,6 +95,7 @@
 				E8214C4A1D9DADF60045F1B9 /* CommonClasses.swift */,
 				E8214C341D9D6FC80045F1B9 /* SessionViewController.swift */,
 				E87563701DAD48AE00D676F7 /* CommTableViewController.swift */,
+				E867B2AB1DAFF6B1005DAFB5 /* ProfileViewController.swift */,
 				E8214C481D9DAA850045F1B9 /* LoginViewController.swift */,
 				E8214C501D9EEC0E0045F1B9 /* OAuthViewController.swift */,
 				E8214C361D9D6FC80045F1B9 /* Main.storyboard */,
@@ -232,6 +235,7 @@
 				E87563711DAD48AE00D676F7 /* CommTableViewController.swift in Sources */,
 				E8214C4B1D9DADF60045F1B9 /* CommonClasses.swift in Sources */,
 				E8214C511D9EEC0E0045F1B9 /* OAuthViewController.swift in Sources */,
+				E867B2AC1DAFF6B1005DAFB5 /* ProfileViewController.swift in Sources */,
 				E8214C351D9D6FC80045F1B9 /* SessionViewController.swift in Sources */,
 				E8214C331D9D6FC80045F1B9 /* AppDelegate.swift in Sources */,
 			);

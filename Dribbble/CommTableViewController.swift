@@ -30,8 +30,10 @@ class CommTableViewController: UIViewController, UITableViewDelegate, UITableVie
     var names = [String]()
     var dts = [String]()
     var comms = [String]()
+    var usernames = [String]()
     
     @IBAction func postButtonTap(_ sender: AnyObject) {
+        print("POST")
         DribbApiManager.inst.sendComment(shotId: CommTableViewController.shotId, text: commentField.text!, completion: { (result) -> Void in
                 print(result)
         })
@@ -78,17 +80,13 @@ class CommTableViewController: UIViewController, UITableViewDelegate, UITableVie
         return cell
     }
     
-    private func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        
-    }
-    
-    func animateViewMoving(up:Bool, moveValue :CGFloat){
-        let movementDuration:TimeInterval = 0.5
+    func animateViewMoving(up: Bool, moveValue: CGFloat){
+        let movementDuration:TimeInterval = up ? 0.4 : 0.2
         let movement:CGFloat = (up ? -moveValue : moveValue)
         UIView.beginAnimations("animateView", context: nil)
         UIView.setAnimationBeginsFromCurrentState(true)
         UIView.setAnimationDuration(movementDuration )
-        self.view.frame = self.view.frame.offsetBy(dx: 0,  dy: movement)
+        self.view.frame = self.view.frame.offsetBy(dx: 0, dy: movement)
         UIView.commitAnimations()
     }
     
@@ -107,6 +105,9 @@ class CommTableViewController: UIViewController, UITableViewDelegate, UITableVie
             let contentInsets = UIEdgeInsets(top: 0, left: 0, bottom: keyboardSize.height, right: 0)
             animateViewMoving(up: false, moveValue: contentInsets.bottom)
         }
+    }
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print("TEST")
     }
     
     func loadComments() {
@@ -128,7 +129,13 @@ class CommTableViewController: UIViewController, UITableViewDelegate, UITableVie
                         if let name = userDict["name"] {
                             self.names.append(name as! String)
                         } else {
-                            print("NO USER NAME")
+                            print("NO NAME")
+                        }
+                        
+                        if let username = userDict["name"] {
+                            self.usernames.append(username as! String)
+                        } else {
+                            print("NO USERNAME")
                         }
                         
                         if let dt = userDict["created_at"] {
@@ -150,12 +157,12 @@ class CommTableViewController: UIViewController, UITableViewDelegate, UITableVie
                         print("NO COMMENT BODY")
                     }
                 }
-                print("===========================")
-                print(self.avatars)
-                print(self.names)
-                print(self.dts)
-                print(self.comms)
-                print("===========================")
+//                print("===========================")
+//                print(self.avatars)
+//                print(self.names)
+//                print(self.dts)
+//                print(self.comms)
+//                print("===========================")
                 self.tableView.reloadData()
             } else {
                 print("NO COMMENTS")

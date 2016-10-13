@@ -29,8 +29,10 @@ class SessionViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.refreshControl?.attributedTitle = NSAttributedString(string: "Pull to refresh")
-        self.refreshControl?.addTarget(self, action: #selector(SessionViewController.refresh(panGesture:)), for: UIControlEvents.valueChanged)
+        refreshControl = UIRefreshControl()
+        refreshControl?.attributedTitle = NSAttributedString(string: "Pull to refresh")
+        refreshControl?.addTarget(self, action: #selector(SessionViewController.refresh(panGesture:)), for: UIControlEvents.valueChanged)
+        tableView.addSubview(refreshControl!)
     }
 
     override func didReceiveMemoryWarning() {
@@ -126,13 +128,13 @@ class SessionViewController: UITableViewController {
             loadingNotif.hide(animated: true, afterDelay: 0)
             print("titles count \(self.titles.count), desc count \(self.descriptions.count), imgUrl count \(self.images.count)")
 //            if (self.refreshControl?.isRefreshing)! {
-//                self.refreshControl?.endRefreshing()
 //            }
         }
     }
     
     func refresh(panGesture: UIPanGestureRecognizer) {
         self.loadRecentShots()
+        self.refreshControl?.endRefreshing()
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
