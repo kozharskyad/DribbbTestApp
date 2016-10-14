@@ -12,6 +12,8 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     static var username: String = ""
     
     var followersClicked: Bool = false
+    var likesUrl: String = ""
+    var followersUrl: String = ""
 
     @IBOutlet weak var userAvatar: UIImageView!
     @IBOutlet weak var userNameLabel: UILabel!
