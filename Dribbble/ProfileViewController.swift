@@ -45,6 +45,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     override func viewDidLoad() {
         super.viewDidLoad()
         DribbApiManager.inst.getUserInfo(username: ProfileViewController.username, completion: { (result) -> Void in
+            self.userAvatar.contentMode = .scaleAspectFit
             self.userAvatar.sd_setImage(with: NSURL(string: result?["avatar_url"] as! String) as! URL)
             self.userNameLabel.text = result?["name"] as! String?
             self.userInfoLabel.text = result?["bio"] as! String?

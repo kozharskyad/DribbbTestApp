@@ -74,6 +74,7 @@ class CommTableViewController: UIViewController, UITableViewDelegate, UITableVie
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell:CommCustomCell = tableView.dequeueReusableCell(withIdentifier: "CommCell") as! CommCustomCell
         cell.name.text = self.names[indexPath.row].stripHTML()
+        cell.avatar.contentMode = .scaleAspectFill
         cell.avatar.sd_setImage(with: NSURL(string: self.avatars[indexPath.row]) as! URL)
         cell.comm.text = self.comms[indexPath.row].stripHTML()
         cell.dt.text = self.dts[indexPath.row].stripHTML()

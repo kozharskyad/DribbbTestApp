@@ -61,6 +61,7 @@ class SessionViewController: UITableViewController {
         let cell:CustomCell = tableView.dequeueReusableCell(withIdentifier: "LabelCell") as! CustomCell
         cell.title.text = self.titles[indexPath.row]
         cell.desc.text = self.descriptions[indexPath.row]
+        cell.imgPreview.contentMode = .scaleAspectFill
         cell.imgPreview.sd_setImage(with: NSURL(string: self.images[indexPath.row]) as URL!, completed: nil)
         return cell
     }
@@ -96,6 +97,9 @@ class SessionViewController: UITableViewController {
             self.tableView.reloadData()
             
             for shot in (arr as? [[String:Any]])! {
+                if let animated = shot["animated"] as? Bool {
+                    guard !animated else { continue }
+                }
                 if let title = shot["title"] as? String {
                     self.titles.append(title.stripHTML())
                 } else {
