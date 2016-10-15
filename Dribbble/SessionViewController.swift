@@ -10,6 +10,7 @@ import UIKit
 import RealmSwift
 import MBProgressHUD
 import SDWebImage
+import SwiftyJSON
 
 class CustomCell: UITableViewCell {
     @IBOutlet weak var imgPreview: UIImageView!
@@ -62,7 +63,8 @@ class SessionViewController: UITableViewController {
         cell.title.text = self.titles[indexPath.row]
         cell.desc.text = self.descriptions[indexPath.row]
         cell.imgPreview.contentMode = .scaleAspectFill
-        cell.imgPreview.sd_setImage(with: NSURL(string: self.images[indexPath.row]) as URL!, completed: nil)
+//        cell.imgPreview.sd_setImage(with: NSURL(string: self.images[indexPath.row]) as URL!, completed: nil)
+        cell.imgPreview.sd_setImageWithPreviousCachedImage(with: NSURL(string: self.images[indexPath.row]) as URL!, placeholderImage: nil, options: SDWebImageOptions.continueInBackground, progress: nil, completed: nil)
         return cell
     }
     
