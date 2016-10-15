@@ -26,6 +26,7 @@ class CommTableViewController: UIViewController, UITableViewDelegate, UITableVie
     
     static var shotId: Int = 0
     static var shotImage: String = ""
+    var keyBoardUpped: Bool = false
     
     var avatars = [String]()
     var names = [String]()
@@ -91,6 +92,10 @@ class CommTableViewController: UIViewController, UITableViewDelegate, UITableVie
     }
     
     func cellAction(sender: UITapGestureRecognizer) {
+        guard !self.keyBoardUpped else {
+            self.view.endEditing(true)
+            return
+        }
         let tapLoc = sender.location(in: self.tableView)
         let indexPath = self.tableView.indexPathForRow(at: tapLoc)
         ProfileViewController.username = self.usernames[(indexPath?.row)!]
@@ -114,6 +119,7 @@ class CommTableViewController: UIViewController, UITableViewDelegate, UITableVie
             let contentInsets = UIEdgeInsets(top: 0, left: 0, bottom: keyboardSize.height, right: 0)
             animateViewMoving(up: true, moveValue: contentInsets.bottom)
         }
+        self.keyBoardUpped = true
     }
     
     func keyboardWillHide(notification: NSNotification) {
@@ -122,6 +128,7 @@ class CommTableViewController: UIViewController, UITableViewDelegate, UITableVie
             let contentInsets = UIEdgeInsets(top: 0, left: 0, bottom: keyboardSize.height, right: 0)
             animateViewMoving(up: false, moveValue: contentInsets.bottom)
         }
+        self.keyBoardUpped = false
     }
 
     func loadComments() {
