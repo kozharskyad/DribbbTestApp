@@ -21,6 +21,8 @@ class CustomCell: UITableViewCell {
 class SessionViewController: UITableViewController {
     static let inst = SessionViewController()
     
+    var shotList: Results<Shot>!
+    
     var runned: Bool = false
     var titles = [String]()
     var descriptions = [String]()
@@ -60,20 +62,16 @@ class SessionViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell:CustomCell = tableView.dequeueReusableCell(withIdentifier: "LabelCell") as! CustomCell
-        cell.title.text = self.titles[indexPath.row]
-        cell.desc.text = self.descriptions[indexPath.row]
+        cell.title.text = self.shotList[indexPath.row].title.stripHTML()
+        cell.desc.text = self.shotList[indexPath.row].desc.stripHTML()
         cell.imgPreview.contentMode = .scaleAspectFill
-//        cell.imgPreview.sd_setImage(with: NSURL(string: self.images[indexPath.row]) as URL!, completed: nil)
-        cell.imgPreview.sd_setImageWithPreviousCachedImage(with: NSURL(string: self.images[indexPath.row]) as URL!, placeholderImage: nil, options: SDWebImageOptions.continueInBackground, progress: nil, completed: nil)
+        cell.imgPreview.sd_setImageWithPreviousCachedImage(with: NSURL(string: self.shotList[indexPath.row].imgUrl) as URL!, placeholderImage: nil, options: SDWebImageOptions.continueInBackground, progress: nil, completed: nil)
         return cell
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if tableView == self.tableView {
-            return self.titles.count
-        } else {
-            return 1
-        }
+        guard let count = self.shotList?.count else { return 0 }
+        return count
     }
     
     override func numberOfSections(in tableView: UITableView) -> Int {
@@ -86,21 +84,19 @@ class SessionViewController: UITableViewController {
             self.fromComm = false
             return
         }
-        // **********
         
         let loadingNotif = MBProgressHUD.showAdded(to: self.view, animated: true)
         loadingNotif.label.text = "Loading recent shots"
         
         DribbApiManager.inst.getRecentShots()
+        let realm = try! Realm()
         DribbApiManager.inst.CompleteLoadShots = {arr -> Void in
             self.titles.removeAll(keepingCapacity: false)
             self.descriptions.removeAll(keepingCapacity: false)
             self.images.removeAll(keepingCapacity: false)
-            self.tableView.reloadData()
             
             if let shots = arr.array {
                 for shot in shots {
-                    // Проверяем, не анимированный ли шот
                     guard !shot["animated"].bool! else {
                         continue
                     }
@@ -115,13 +111,19 @@ class SessionViewController: UITableViewController {
                     // Проверяем, все ли данные имеются
                     guard title != nil && desc != nil && imgUrl != nil && shotId != nil else { continue }
                     
-                    // Пихаем информацию в соответствующие массивы
-                    self.titles.append(title!)
-                    self.descriptions.append(desc!)
-                    self.images.append(imgUrl!)
-                    self.shotIds.append(shotId!)
+                    // Записываем шот в реалм
+                    let newShot = Shot()
+                    newShot.title = title!
+                    newShot.desc = desc!
+                    newShot.imgUrl = imgUrl!
+                    newShot.shotId = shotId!
+                    try! realm.write {
+                        realm.add(newShot, update: true)
+                    }
+                    
                 }
-                self.tableView.reloadData()
+                self.shotList = realm.objects(Shot.self) // Заполняем переменную результатов для таблицы
+                self.tableView.reloadData() // Обновляем таблицу для показа собранных шотов
             }
             loadingNotif.hide(animated: true, afterDelay: 0)
         }
@@ -133,8 +135,8 @@ class SessionViewController: UITableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        CommTableViewController.shotId = self.shotIds[indexPath.row]
-        CommTableViewController.shotImage = self.images[indexPath.row]
+        CommTableViewController.shotId = self.shotList[indexPath.row].shotId
+        CommTableViewController.shotImage = self.shotList[indexPath.row].imgUrl
         self.fromComm = true
         performSegue(withIdentifier: "shotToComm", sender: self)
     }

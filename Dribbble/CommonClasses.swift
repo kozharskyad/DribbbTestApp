@@ -49,8 +49,15 @@ extension UILabel {
     }
 }
 
-class ImageInfo {
-    dynamic var url: String = ""
+class Shot: Object {
+    dynamic var title: String = ""
+    dynamic var desc: String = ""
+    dynamic var imgUrl: String = ""
+    dynamic var shotId: Int = 0
+    
+    override static func primaryKey() -> String? {
+        return "shotId"
+    }
 }
 
 class LogInfo: Object {
