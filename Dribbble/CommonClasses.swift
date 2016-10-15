@@ -65,7 +65,7 @@ class DribbApiManager {
     var OAuthToken:String?
     var OAuthTokenCompletionHandler:((NSError?) -> Void)?
     var Complete:((NSDictionary?) -> Void)?
-    var CompleteLoadShots:((NSArray?) -> Void)?
+    var CompleteLoadShots:((JSON) -> Void)?
     var CompleteLoadComments:((NSArray?) -> Void)?
     
     func processStep1auth(url: NSURL) {
@@ -172,9 +172,9 @@ class DribbApiManager {
         Alamofire.request(reqURL, parameters: params, headers: auth_header)
             .responseJSON{response in
                 if let result = response.result.value {
-                    let JSON = result as! NSArray
+                    let json = JSON(result)
                     if let completionHandler = self.CompleteLoadShots {
-                        completionHandler(JSON)
+                        completionHandler(json)
                     }
                 }
         }

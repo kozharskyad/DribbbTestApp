@@ -98,43 +98,32 @@ class SessionViewController: UITableViewController {
             self.images.removeAll(keepingCapacity: false)
             self.tableView.reloadData()
             
-            for shot in (arr as? [[String:Any]])! {
-                if let animated = shot["animated"] as? Bool {
-                    guard !animated else { continue }
-                }
-                if let title = shot["title"] as? String {
-                    self.titles.append(title.stripHTML())
-                } else {
-                    self.titles.append("No title")
-                }
-                
-                if let desc = shot["description"] as? String {
-                    self.descriptions.append(desc.stripHTML())
-                } else {
-                    self.descriptions.append("No description")
-                }
-                
-                if let imgUrl = shot["images"] as? NSDictionary {
-                    let imgUrlHidpi = imgUrl["hidpi"] as? String
-                    let imgUrlNorm = imgUrl["normal"] as? String
-                    if imgUrlHidpi == "<null>" || imgUrlHidpi == nil {
-                        self.images.append(imgUrlNorm!)
-                    } else {
-                        self.images.append(imgUrlHidpi!)
+            if let shots = arr.array {
+                for shot in shots {
+                    // Проверяем, не анимированный ли шот
+                    guard !shot["animated"].bool! else {
+                        continue
                     }
-                } else {
-                    print("NOIMG")
+                    
+                    // Собираем информацию о шоте
+                    let title = shot["title"].string
+                    let desc = shot["description"].string
+                    var imgUrl = shot["images"]["hidpi"].string
+                    if imgUrl == nil { imgUrl = shot["images"]["normal"].string }
+                    let shotId = shot["id"].int
+                    
+                    // Проверяем, все ли данные имеются
+                    guard title != nil && desc != nil && imgUrl != nil && shotId != nil else { continue }
+                    
+                    // Пихаем информацию в соответствующие массивы
+                    self.titles.append(title!)
+                    self.descriptions.append(desc!)
+                    self.images.append(imgUrl!)
+                    self.shotIds.append(shotId!)
                 }
-                
-                if let shotId = shot["id"] as? Int {
-                    self.shotIds.append(shotId)
-                }
+                self.tableView.reloadData()
             }
-            self.tableView.reloadData()
             loadingNotif.hide(animated: true, afterDelay: 0)
-            print("titles count \(self.titles.count), desc count \(self.descriptions.count), imgUrl count \(self.images.count)")
-//            if (self.refreshControl?.isRefreshing)! {
-//            }
         }
     }
     
