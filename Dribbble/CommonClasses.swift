@@ -50,10 +50,12 @@ extension UILabel {
 }
 
 class Shot: Object {
+    dynamic var author: String = ""
     dynamic var title: String = ""
     dynamic var desc: String = ""
     dynamic var imgUrl: String = ""
     dynamic var shotId: Int = 0
+    dynamic var username: String = ""
     
     override static func primaryKey() -> String? {
         return "shotId"
@@ -199,7 +201,6 @@ class DribbApiManager {
             .responseJSON{response in
                 if let result = response.result.value {
                     let JSON = result as? NSArray
-//                    if let completionHandler = self.CompleteLoadComments {
                     completion(JSON)
 //                    }
                 }
@@ -221,4 +222,17 @@ class DribbApiManager {
 //                }
         }
     }
+    
+    func setShotLike(shotId: Int, completion: @escaping (String) -> ()) {
+        let auth_header = [ "Authorization": "Bearer " + self.OAuthToken! ]
+        let reqURL: String = self.apiURL + "/shots/" + String(shotId) + "/like"
+        Alamofire.request(reqURL, method: .post, headers: auth_header)
+            .responseString{response in
+                if let result = response.result.value {
+//                    let json = JSON(result)
+                    completion(result)
+                }
+        }
+    }
+    
 }

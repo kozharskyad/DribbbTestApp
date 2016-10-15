@@ -16,6 +16,8 @@ class CustomCell: UITableViewCell {
     @IBOutlet weak var imgPreview: UIImageView!
     @IBOutlet weak var title: UILabel!
     @IBOutlet weak var desc: UILabel!
+    @IBOutlet weak var author: UIButton!
+    @IBOutlet weak var like: UIButton!
 }
 
 class SessionViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
@@ -24,12 +26,6 @@ class SessionViewController: UIViewController, UITableViewDelegate, UITableViewD
     var refreshControl: UIRefreshControl!
     
     var shotList: Results<Shot>!
-    
-    var runned: Bool = false
-    var titles = [String]()
-    var descriptions = [String]()
-    var images = [String]()
-    var shotIds = [Int]()
     var fromComm: Bool = false
     
     @IBAction func logout(_ sender: AnyObject) {
@@ -38,6 +34,16 @@ class SessionViewController: UIViewController, UITableViewDelegate, UITableViewD
             realm.deleteAll()
         }
         performSegue(withIdentifier: "sessionToLogin", sender: self)
+    }
+    
+    @IBAction func like(_ sender: AnyObject) {
+        DribbApiManager.inst.setShotLike(shotId: self.shotList[sender.tag].shotId, completion: { (result) -> Void in
+            print(result)
+        })
+    }
+    
+    @IBAction func authorInfoTap(_ sender: AnyObject) {
+        ProfileViewController.username = self.shotList[sender.tag].username
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -64,11 +70,6 @@ class SessionViewController: UIViewController, UITableViewDelegate, UITableViewD
         let realm = try! Realm()
         let objs = realm.objects(LogInfo.self).filter("type = 'access_token'")
         if objs.count > 0 {
-//            guard runned else {
-//                performSegue(withIdentifier: "sessionToOAuth", sender: self)
-//                runned = true
-//                return
-//            }
             loadRecentShots()
         } else {
             print("no token. perform login")
@@ -82,6 +83,9 @@ class SessionViewController: UIViewController, UITableViewDelegate, UITableViewD
         cell.desc.text = self.shotList[indexPath.row].desc.stripHTML()
         cell.imgPreview.contentMode = .scaleAspectFill
         cell.imgPreview.sd_setImageWithPreviousCachedImage(with: NSURL(string: self.shotList[indexPath.row].imgUrl) as URL!, placeholderImage: nil, options: SDWebImageOptions.continueInBackground, progress: nil, completed: nil)
+        cell.author.setTitle(self.shotList[indexPath.row].author.stripHTML(), for: .normal)
+        cell.author.tag = indexPath.row
+        cell.like.tag = indexPath.row
         return cell
     }
     
@@ -103,14 +107,11 @@ class SessionViewController: UIViewController, UITableViewDelegate, UITableViewD
         
         let loadingNotif = MBProgressHUD.showAdded(to: self.view, animated: true)
         loadingNotif.label.text = "Loading recent shots"
+        loadingNotif.hide(animated: true, afterDelay: 5)
         
         DribbApiManager.inst.getRecentShots()
         let realm = try! Realm()
         DribbApiManager.inst.CompleteLoadShots = {arr -> Void in
-            self.titles.removeAll(keepingCapacity: false)
-            self.descriptions.removeAll(keepingCapacity: false)
-            self.images.removeAll(keepingCapacity: false)
-            
             if let shots = arr.array {
                 for shot in shots {
                     guard !shot["animated"].bool! else {
@@ -123,16 +124,20 @@ class SessionViewController: UIViewController, UITableViewDelegate, UITableViewD
                     var imgUrl = shot["images"]["hidpi"].string
                     if imgUrl == nil { imgUrl = shot["images"]["normal"].string }
                     let shotId = shot["id"].int
+                    let author = shot["user"]["name"].string
+                    let username = shot["user"]["username"].string
                     
                     // Проверяем, все ли данные имеются
-                    guard title != nil && desc != nil && imgUrl != nil && shotId != nil else { continue }
+                    guard title != nil && desc != nil && imgUrl != nil && shotId != nil && author != nil else { continue }
                     
                     // Записываем шот в реалм
                     let newShot = Shot()
+                    newShot.author = author!
                     newShot.title = title!
                     newShot.desc = desc!
                     newShot.imgUrl = imgUrl!
                     newShot.shotId = shotId!
+                    newShot.username = username!
                     try! realm.write {
                         realm.add(newShot, update: true)
                     }

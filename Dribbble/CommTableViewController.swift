@@ -8,6 +8,7 @@
 
 import UIKit
 import Foundation
+import MBProgressHUD
 
 class CommCustomCell: UITableViewCell {
     @IBOutlet weak var avatar: UIImageView!
@@ -33,9 +34,13 @@ class CommTableViewController: UIViewController, UITableViewDelegate, UITableVie
     var usernames = [String]()
     
     @IBAction func postButtonTap(_ sender: AnyObject) {
-        print("POST")
+        let loadingNotif = MBProgressHUD.showAdded(to: self.view, animated: true)
+        loadingNotif.label.text = "Sending comment"
+        loadingNotif.hide(animated: true, afterDelay: 5)
+
         DribbApiManager.inst.sendComment(shotId: CommTableViewController.shotId, text: commentField.text!, completion: { (result) -> Void in
-                print(result)
+            loadingNotif.hide(animated: true, afterDelay: 0)
+            self.loadComments()
         })
     }
     
@@ -55,6 +60,8 @@ class CommTableViewController: UIViewController, UITableViewDelegate, UITableVie
     override func viewWillAppear(_ animated: Bool) {
         NotificationCenter.default.addObserver(self, selector: #selector(CommTableViewController.keyboardWillShow(notification:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(CommTableViewController.keyboardWillHide(notification:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        self.tableView.estimatedRowHeight = 86
+        self.tableView.rowHeight = UITableViewAutomaticDimension
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -75,6 +82,7 @@ class CommTableViewController: UIViewController, UITableViewDelegate, UITableVie
         cell.avatar.contentMode = .scaleAspectFill
         cell.avatar.sd_setImage(with: NSURL(string: self.avatars[indexPath.row]) as! URL)
         cell.comm.text = self.comms[indexPath.row].stripHTML()
+        cell.comm.sizeToFit()
         cell.dt.text = self.dts[indexPath.row].stripHTML().dateFormatFromTZ()
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(CommTableViewController.cellAction))
         cell.addGestureRecognizer(tap)

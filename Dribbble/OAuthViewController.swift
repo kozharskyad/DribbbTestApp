@@ -29,6 +29,7 @@ class OAuthViewController: UIViewController {
         
         let loadingNotif = MBProgressHUD.showAdded(to: self.view, animated: true)
         loadingNotif.label.text = "Authenticating..."
+        loadingNotif.hide(animated: true, afterDelay: 5)
         
         // Вызов WebView для отображения стандартной формы OAuth2-авторизации
         let reqURL = NSURL(string: "https://dribbble.com/oauth/authorize?client_id=48a0f2d306113b97824df1b199253c2e622263ca9f5a20d8df8b7f47c9ed236b&scope=public%20write")
