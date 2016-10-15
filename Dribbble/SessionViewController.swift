@@ -18,8 +18,10 @@ class CustomCell: UITableViewCell {
     @IBOutlet weak var desc: UILabel!
 }
 
-class SessionViewController: UITableViewController {
+class SessionViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     static let inst = SessionViewController()
+    @IBOutlet var tableView: UITableView!
+    var refreshControl: UIRefreshControl!
     
     var shotList: Results<Shot>!
     
@@ -69,7 +71,7 @@ class SessionViewController: UITableViewController {
         }
     }
     
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell:CustomCell = tableView.dequeueReusableCell(withIdentifier: "LabelCell") as! CustomCell
         cell.title.text = self.shotList[indexPath.row].title.stripHTML()
         cell.desc.text = self.shotList[indexPath.row].desc.stripHTML()
@@ -78,12 +80,12 @@ class SessionViewController: UITableViewController {
         return cell
     }
     
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         guard let count = self.shotList?.count else { return 0 }
         return count
     }
     
-    override func numberOfSections(in tableView: UITableView) -> Int {
+    func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
     
@@ -143,7 +145,7 @@ class SessionViewController: UITableViewController {
         self.refreshControl?.endRefreshing()
     }
     
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         CommTableViewController.shotId = self.shotList[indexPath.row].shotId
         CommTableViewController.shotImage = self.shotList[indexPath.row].imgUrl
         self.fromComm = true
