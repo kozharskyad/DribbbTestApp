@@ -46,6 +46,7 @@ class CommTableViewController: UIViewController, UITableViewDelegate, UITableVie
     override func viewDidLoad() {
         super.viewDidLoad()
         self.hideKeyboardWhenTappedAround()
+        shotPreview.contentMode = .scaleAspectFill
         shotPreview.sd_setImage(with: NSURL(string: CommTableViewController.shotImage) as! URL)
         loadComments()
     }
