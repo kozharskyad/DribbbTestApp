@@ -33,6 +33,11 @@ class SessionViewController: UIViewController, UITableViewDelegate, UITableViewD
     var fromComm: Bool = false
     
     @IBAction func logout(_ sender: AnyObject) {
+        let realm = try! Realm()
+        try! realm.write {
+            realm.deleteAll()
+        }
+        performSegue(withIdentifier: "sessionToLogin", sender: self)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
