@@ -77,7 +77,7 @@ class CommTableViewController: UIViewController, UITableViewDelegate, UITableVie
         cell.avatar.contentMode = .scaleAspectFill
         cell.avatar.sd_setImage(with: NSURL(string: self.avatars[indexPath.row]) as! URL)
         cell.comm.text = self.comms[indexPath.row].stripHTML()
-        cell.dt.text = self.dts[indexPath.row].stripHTML()
+        cell.dt.text = self.dts[indexPath.row].stripHTML().dateFormatFromTZ()
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(CommTableViewController.cellAction))
         cell.addGestureRecognizer(tap)
         tap.cancelsTouchesInView = false

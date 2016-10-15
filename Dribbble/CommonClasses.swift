@@ -27,6 +27,30 @@ extension String {
     func stripHTML() -> String {
         return self.replacingOccurrences(of: "<[^>]+>", with: "", options: .regularExpression, range: nil)
     }
+    
+    func dateFormatFromTZ() -> String {
+        let dtFormatter = DateFormatter()
+        dtFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+        let date = dtFormatter.date(from: self)
+        dtFormatter.dateFormat = "MM.dd.yyyy hh:mm"
+        return dtFormatter.string(from: date!)
+    }
+}
+
+extension UILabel{
+    
+    func requiredHeight() -> CGFloat {
+        
+        let label:UILabel = UILabel(frame: CGRect(x: 0, y: 0, width: self.frame.width, height: CGFloat.greatestFiniteMagnitude))
+        label.numberOfLines = 0
+        label.lineBreakMode = NSLineBreakMode.byWordWrapping
+        label.font = self.font
+        label.text = self.text
+        
+        label.sizeToFit()
+        
+        return label.frame.height
+    }
 }
 
 class LogInfo: Object {
@@ -110,6 +134,30 @@ class DribbApiManager {
                 if let result = response.result.value {
                     let JSON = result as! [String: AnyObject]
                     completion(JSON)
+                }
+        }
+    }
+    
+    func getUserLikes(username: String, completion: @escaping (JSON) -> ()) {
+        let auth_header = [ "Authorization": "Bearer " + self.OAuthToken! ]
+        let reqURL: String = self.apiURL + "/users/" + username + "/likes"
+        Alamofire.request(reqURL, headers: auth_header)
+            .responseJSON{response in
+                if let result = response.result.value {
+                    let json = JSON(result)
+                    completion(json)
+                }
+        }
+    }
+    
+    func getUserFollowers(username: String, completion: @escaping (JSON) -> ()) {
+        let auth_header = [ "Authorization": "Bearer " + self.OAuthToken! ]
+        let reqURL: String = self.apiURL + "/users/" + username + "/followers"
+        Alamofire.request(reqURL, headers: auth_header)
+            .responseJSON{response in
+                if let result = response.result.value {
+                    let json = JSON(result)
+                    completion(json)
                 }
         }
     }
