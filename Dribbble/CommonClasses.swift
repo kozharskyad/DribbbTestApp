@@ -170,6 +170,11 @@ class DribbApiManager {
     }
     
     func getRecentShots() {
+        if self.OAuthToken == nil {
+            let realm = try! Realm()
+            let login = realm.objects(LogInfo.self)
+            self.OAuthToken = login.last?.token
+        }
         let auth_header = [ "Authorization": "Bearer " + self.OAuthToken! ]
         let reqURL: String = self.apiURL + "/shots"
         let params: Parameters = [

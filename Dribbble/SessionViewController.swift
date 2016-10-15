@@ -30,6 +30,15 @@ class SessionViewController: UITableViewController {
     var shotIds = [Int]()
     var fromComm: Bool = false
     
+    @IBAction func logout(_ sender: AnyObject) {
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        let backButt = UIBarButtonItem()
+        backButt.title = "Shots"
+        navigationItem.backBarButtonItem = backButt
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         refreshControl = UIRefreshControl()
@@ -48,11 +57,11 @@ class SessionViewController: UITableViewController {
         let realm = try! Realm()
         let objs = realm.objects(LogInfo.self).filter("type = 'access_token'")
         if objs.count > 0 {
-            guard runned else {
-                performSegue(withIdentifier: "sessionToOAuth", sender: self)
-                runned = true
-                return
-            }
+//            guard runned else {
+//                performSegue(withIdentifier: "sessionToOAuth", sender: self)
+//                runned = true
+//                return
+//            }
             loadRecentShots()
         } else {
             print("no token. perform login")

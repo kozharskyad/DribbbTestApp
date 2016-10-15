@@ -36,10 +36,6 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
     @IBOutlet weak var userFollowersButton: UIButton!
     @IBOutlet weak var listLabel: UILabel!
     
-    @IBAction func backButtonTap(_ sender: AnyObject) {
-        navigationController?.popViewController(animated: true)
-    }
-    
     @IBAction func likesButtonTap(_ sender: AnyObject) {
         guard self.followersClicked else { return }
         self.followersClicked = false

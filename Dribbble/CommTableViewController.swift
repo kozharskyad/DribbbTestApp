@@ -39,12 +39,9 @@ class CommTableViewController: UIViewController, UITableViewDelegate, UITableVie
         })
     }
     
-    @IBAction func backButtonTap(_ sender: AnyObject) {
-        navigationController?.popViewController(animated: true)
-    }
-
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         self.hideKeyboardWhenTappedAround()
         shotPreview.contentMode = .scaleAspectFill
         shotPreview.sd_setImage(with: NSURL(string: CommTableViewController.shotImage) as! URL)
