@@ -49,19 +49,6 @@ extension UILabel {
     }
 }
 
-class Shot: Object {
-    dynamic var author: String = ""
-    dynamic var title: String = ""
-    dynamic var desc: String = ""
-    dynamic var imgUrl: String = ""
-    dynamic var shotId: Int = 0
-    dynamic var username: String = ""
-    
-    override static func primaryKey() -> String? {
-        return "shotId"
-    }
-}
-
 class LogInfo: Object {
     dynamic var token: String = ""
     dynamic var type: String = ""

@@ -11,6 +11,7 @@ import RealmSwift
 import MBProgressHUD
 import SDWebImage
 import SwiftyJSON
+import Realm
 
 class CustomCell: UITableViewCell {
     @IBOutlet weak var imgPreview: UIImageView!
@@ -20,12 +21,79 @@ class CustomCell: UITableViewCell {
     @IBOutlet weak var like: UIButton!
 }
 
+// Тут я понял (в самом конце разработки), что такое MVVM и запользовал его,
+// но к сожалению только в этом контроллере.
+// Однако всецело понял принцип
+class Shot: Object {
+    dynamic var author: String?
+    dynamic var title: String?
+    dynamic var desc: String?
+    dynamic var imgUrl: String?
+    dynamic var shotId: Int = 0
+    dynamic var username: String?
+    
+    required init(author: String, title: String, desc: String, imgUrl: String, shotId: Int, username: String) {
+        self.author = author
+        self.title = title
+        self.desc = desc
+        self.imgUrl = imgUrl
+        self.shotId = shotId
+        self.username = username
+        super.init()
+    }
+    
+    required init() {
+        super.init()
+    }
+    
+    required init(realm: RLMRealm, schema: RLMObjectSchema) {
+        super.init(realm: realm, schema: schema)
+    }
+    
+    required init(value: Any, schema: RLMSchema) {
+        super.init(value: value, schema: schema)
+    }
+
+    override static func primaryKey() -> String? {
+        return "shotId"
+    }
+}
+
+class ShotViewModel {
+    var shots: [ShotViewModel] = []
+    
+    private var shot: Shot
+    var authorText: String {
+        return shot.author!
+    }
+    var titleText: String {
+        return shot.title!
+    }
+    var descText: String {
+        return shot.desc!
+    }
+    var imgUrlText: String {
+        return shot.imgUrl!
+    }
+    var shotIdNum: Int {
+        return shot.shotId
+    }
+    var usernameText: String {
+        return shot.username!
+    }
+    
+    init(shot: Shot) {
+        self.shot = shot
+    }
+}
+
 class SessionViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
     static let inst = SessionViewController()
     @IBOutlet var tableView: UITableView!
     var refreshControl: UIRefreshControl!
     
-    var shotList: Results<Shot>!
+    var shots = [ShotViewModel]()
+    
     var fromComm: Bool = false
     
     @IBAction func logout(_ sender: AnyObject) {
@@ -37,13 +105,15 @@ class SessionViewController: UIViewController, UITableViewDelegate, UITableViewD
     }
     
     @IBAction func like(_ sender: AnyObject) {
-        DribbApiManager.inst.setShotLike(shotId: self.shotList[sender.tag].shotId, completion: { (result) -> Void in
+        let shotsViewModel = shots[sender.tag]
+        DribbApiManager.inst.setShotLike(shotId: shotsViewModel.shotIdNum, completion: { (result) -> Void in
             print(result)
         })
     }
     
     @IBAction func authorInfoTap(_ sender: AnyObject) {
-        ProfileViewController.username = self.shotList[sender.tag].username
+        let shotsViewModel = shots[sender.tag]
+        ProfileViewController.username = shotsViewModel.usernameText
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
@@ -66,7 +136,7 @@ class SessionViewController: UIViewController, UITableViewDelegate, UITableViewD
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
+        
         let realm = try! Realm()
         let objs = realm.objects(LogInfo.self).filter("type = 'access_token'")
         if objs.count > 0 {
@@ -79,19 +149,19 @@ class SessionViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell:CustomCell = tableView.dequeueReusableCell(withIdentifier: "LabelCell") as! CustomCell
-        cell.title.text = self.shotList[indexPath.row].title.stripHTML()
-        cell.desc.text = self.shotList[indexPath.row].desc.stripHTML()
+        let shotsViewModel = self.shots[indexPath.row]
+        cell.title.text = shotsViewModel.titleText
+        cell.desc.text = shotsViewModel.descText
         cell.imgPreview.contentMode = .scaleAspectFill
-        cell.imgPreview.sd_setImageWithPreviousCachedImage(with: NSURL(string: self.shotList[indexPath.row].imgUrl) as URL!, placeholderImage: nil, options: SDWebImageOptions.continueInBackground, progress: nil, completed: nil)
-        cell.author.setTitle(self.shotList[indexPath.row].author.stripHTML(), for: .normal)
+        cell.imgPreview.sd_setImageWithPreviousCachedImage(with: NSURL(string: shotsViewModel.imgUrlText) as URL!, placeholderImage: nil, options: SDWebImageOptions.continueInBackground, progress: nil, completed: nil)
+        cell.author.setTitle(shotsViewModel.authorText, for: .normal)
         cell.author.tag = indexPath.row
         cell.like.tag = indexPath.row
         return cell
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        guard let count = self.shotList?.count else { return 0 }
-        return count
+        return self.shots.count
     }
     
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -114,6 +184,7 @@ class SessionViewController: UIViewController, UITableViewDelegate, UITableViewD
         DribbApiManager.inst.CompleteLoadShots = {arr -> Void in
             if let shots = arr.array {
                 for shot in shots {
+                    // Игнорируем анимированные шоты
                     guard !shot["animated"].bool! else {
                         continue
                     }
@@ -130,21 +201,30 @@ class SessionViewController: UIViewController, UITableViewDelegate, UITableViewD
                     // Проверяем, все ли данные имеются
                     guard title != nil && desc != nil && imgUrl != nil && shotId != nil && author != nil else { continue }
                     
+                    // Создаём шот
+                    let newShot = Shot(author: author!.stripHTML(),
+                                       title: title!.stripHTML(),
+                                       desc: desc!.stripHTML(),
+                                       imgUrl: imgUrl!,
+                                       shotId: shotId!,
+                                       username: username!.stripHTML()
+                    )
+
                     // Записываем шот в реалм
-                    let newShot = Shot()
-                    newShot.author = author!
-                    newShot.title = title!
-                    newShot.desc = desc!
-                    newShot.imgUrl = imgUrl!
-                    newShot.shotId = shotId!
-                    newShot.username = username!
                     try! realm.write {
                         realm.add(newShot, update: true)
                     }
                     
                 }
-                self.shotList = realm.objects(Shot.self) // Заполняем переменную результатов для таблицы
-                self.shotList = self.shotList.sorted(byProperty: "shotId", ascending: false)
+                // Достаём все записанные ранее шоты из реалма (да, знаю, что можно было элегантнее)
+                let realmShots = realm.objects(Shot.self).sorted(byProperty: "shotId", ascending: false)
+                self.shots.removeAll(keepingCapacity: false) // Зачищаем массив моделей шотвью
+                
+                // И пихаем в него шоты, которые достали ранее из реалма
+                for realmShot in realmShots {
+                    self.shots.append(ShotViewModel(shot: realmShot))
+                }
+                
                 if self.refreshControl.isRefreshing { self.refreshControl.endRefreshing() }
                 self.tableView.reloadData() // Обновляем таблицу для показа собранных шотов
             }
@@ -154,12 +234,12 @@ class SessionViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func refresh(panGesture: UIPanGestureRecognizer) {
         self.loadRecentShots()
-//        self.refreshControl?.endRefreshing()
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        CommTableViewController.shotId = self.shotList[indexPath.row].shotId
-        CommTableViewController.shotImage = self.shotList[indexPath.row].imgUrl
+        let shotsViewModel = self.shots[indexPath.row]
+        CommTableViewController.shotId = shotsViewModel.shotIdNum
+        CommTableViewController.shotImage = shotsViewModel.imgUrlText
         self.fromComm = true
         performSegue(withIdentifier: "shotToComm", sender: self)
     }

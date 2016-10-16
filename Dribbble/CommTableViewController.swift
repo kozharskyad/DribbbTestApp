@@ -134,9 +134,6 @@ class CommTableViewController: UIViewController, UITableViewDelegate, UITableVie
     func loadComments() {
         DribbApiManager.inst.getShotComments(shotId: CommTableViewController.shotId, completion: { (result) -> Void in
             if let comments = result.array {
-                let loadingNotif = MBProgressHUD.showAdded(to: self.view, animated: true)
-                loadingNotif.label.text = "Sending comment"
-                loadingNotif.hide(animated: true, afterDelay: 5)
                 for comment in comments {
                     let avatar = comment["user"]["avatar_url"].string
                     let name = comment["user"]["name"].string
@@ -157,7 +154,6 @@ class CommTableViewController: UIViewController, UITableViewDelegate, UITableVie
                     self.dts.append(dt!)
                     self.comms.append(comm!)
                     
-                    loadingNotif.hide(animated: true)
                     self.tableView.reloadData()
                 }
             }
