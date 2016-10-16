@@ -33,7 +33,7 @@ extension String {
         dtFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
         let date = dtFormatter.date(from: self)
         dtFormatter.dateFormat = "MM.dd.yyyy hh:mm"
-        return dtFormatter.string(from: date!)
+        return date == nil ? "" : dtFormatter.string(from: date!)
     }
 }
 
@@ -194,15 +194,14 @@ class DribbApiManager {
         }
     }
     
-    func getShotComments(shotId: Int, completion: @escaping (NSArray?) -> ()) {
+    func getShotComments(shotId: Int, completion: @escaping (JSON) -> ()) {
         let auth_header = [ "Authorization": "Bearer " + self.OAuthToken! ]
         let reqURL: String = self.apiURL + "/shots/" + String(shotId) + "/comments?per_page=50"
         Alamofire.request(reqURL, headers: auth_header)
             .responseJSON{response in
                 if let result = response.result.value {
-                    let JSON = result as? NSArray
-                    completion(JSON)
-//                    }
+                    let json = JSON(result)
+                    completion(json)
                 }
         }
     }

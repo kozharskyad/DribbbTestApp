@@ -133,60 +133,33 @@ class CommTableViewController: UIViewController, UITableViewDelegate, UITableVie
 
     func loadComments() {
         DribbApiManager.inst.getShotComments(shotId: CommTableViewController.shotId, completion: { (result) -> Void in
-            if (result?.count)! > 0 {
-                self.names.removeAll(keepingCapacity: false)
-                self.avatars.removeAll(keepingCapacity: false)
-                self.comms.removeAll(keepingCapacity: false)
-                self.dts.removeAll(keepingCapacity: false)
-
-                for commDict in (result as? [[String:Any]])! {
-                    if let userDict = commDict["user"] as? NSDictionary {
-                        if let avatar = userDict["avatar_url"] {
-                            self.avatars.append(avatar as! String)
-                        } else {
-                            print("NO USER AVATAR")
-                        }
-                        
-                        if let name = userDict["name"] {
-                            self.names.append(name as! String)
-                        } else {
-                            print("NO NAME")
-                        }
-                        
-                        if let username = userDict["username"] {
-                            self.usernames.append(username as! String)
-                        } else {
-                            print("NO USERNAME")
-                        }
-                        
-                        if let dt = userDict["created_at"] {
-//                            let dtFormatter = DateFormatter()
-//                            dtFormatter.dateFormat = "hh:mm:ss dd.MM.yyyy"
-//                            let dateObj = dtFormatter.date(from: dt as! String)
-//                            self.dts.append(dtFormatter.string(from: dateObj!))
-                            self.dts.append(dt as! String)
-                        } else {
-                            print("NO USER DT")
-                        }
-                    } else {
-                        print("NO USER DICT")
-                    }
+            if let comments = result.array {
+                let loadingNotif = MBProgressHUD.showAdded(to: self.view, animated: true)
+                loadingNotif.label.text = "Sending comment"
+                loadingNotif.hide(animated: true, afterDelay: 5)
+                for comment in comments {
+                    let avatar = comment["user"]["avatar_url"].string
+                    let name = comment["user"]["name"].string
+                    let username = comment["user"]["username"].string
+                    let dt = comment["user"]["created_at"].string
+                    let comm = comment["body"].string
                     
-                    if let comm = commDict["body"] {
-                        self.comms.append(comm as! String)
-                    } else {
-                        print("NO COMMENT BODY")
-                    }
+                    guard avatar != nil &&
+                        name != nil &&
+                        username != nil &&
+                        dt != nil &&
+                        comm != nil
+                        else { continue }
+                    
+                    self.avatars.append(avatar!)
+                    self.names.append(name!)
+                    self.usernames.append(username!)
+                    self.dts.append(dt!)
+                    self.comms.append(comm!)
+                    
+                    loadingNotif.hide(animated: true)
+                    self.tableView.reloadData()
                 }
-//                print("===========================")
-//                print(self.avatars)
-//                print(self.names)
-//                print(self.dts)
-//                print(self.comms)
-//                print("===========================")
-                self.tableView.reloadData()
-            } else {
-                print("NO COMMENTS")
             }
         })
     }
