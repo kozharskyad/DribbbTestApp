@@ -149,7 +149,7 @@ class DribbApiManager {
     
     func getUserLikes(username: String, completion: @escaping (JSON) -> ()) {
         let auth_header = [ "Authorization": "Bearer " + self.OAuthToken! ]
-        let reqURL: String = self.apiURL + "/users/" + username + "/likes"
+        let reqURL: String = self.apiURL + "/users/" + username + "/likes?per_page=50"
         Alamofire.request(reqURL, headers: auth_header)
             .responseJSON{response in
                 if let result = response.result.value {
@@ -161,7 +161,7 @@ class DribbApiManager {
     
     func getUserFollowers(username: String, completion: @escaping (JSON) -> ()) {
         let auth_header = [ "Authorization": "Bearer " + self.OAuthToken! ]
-        let reqURL: String = self.apiURL + "/users/" + username + "/followers"
+        let reqURL: String = self.apiURL + "/users/" + username + "/followers?per_page=50"
         Alamofire.request(reqURL, headers: auth_header)
             .responseJSON{response in
                 if let result = response.result.value {
@@ -178,10 +178,10 @@ class DribbApiManager {
             self.OAuthToken = login.last?.token
         }
         let auth_header = [ "Authorization": "Bearer " + self.OAuthToken! ]
-        let reqURL: String = self.apiURL + "/shots"
+        let reqURL: String = self.apiURL + "/shots?per_page=25"
         let params: Parameters = [
             "list": "shots",
-            "sort": "popular"
+            "sort": "recent"
         ]
         Alamofire.request(reqURL, parameters: params, headers: auth_header)
             .responseJSON{response in
@@ -196,7 +196,7 @@ class DribbApiManager {
     
     func getShotComments(shotId: Int, completion: @escaping (NSArray?) -> ()) {
         let auth_header = [ "Authorization": "Bearer " + self.OAuthToken! ]
-        let reqURL: String = self.apiURL + "/shots/" + String(shotId) + "/comments"
+        let reqURL: String = self.apiURL + "/shots/" + String(shotId) + "/comments?per_page=50"
         Alamofire.request(reqURL, headers: auth_header)
             .responseJSON{response in
                 if let result = response.result.value {

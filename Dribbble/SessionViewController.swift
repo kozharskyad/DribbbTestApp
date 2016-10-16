@@ -144,6 +144,8 @@ class SessionViewController: UIViewController, UITableViewDelegate, UITableViewD
                     
                 }
                 self.shotList = realm.objects(Shot.self) // Заполняем переменную результатов для таблицы
+                self.shotList = self.shotList.sorted(byProperty: "shotId", ascending: false)
+                if self.refreshControl.isRefreshing { self.refreshControl.endRefreshing() }
                 self.tableView.reloadData() // Обновляем таблицу для показа собранных шотов
             }
             loadingNotif.hide(animated: true, afterDelay: 0)
@@ -152,7 +154,7 @@ class SessionViewController: UIViewController, UITableViewDelegate, UITableViewD
     
     func refresh(panGesture: UIPanGestureRecognizer) {
         self.loadRecentShots()
-        self.refreshControl?.endRefreshing()
+//        self.refreshControl?.endRefreshing()
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
