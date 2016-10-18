@@ -33,12 +33,12 @@ class Shot: Object {
     dynamic var username: String?
     
     required init(author: String, title: String, desc: String, imgUrl: String, shotId: Int, username: String) {
-        self.author = author
-        self.title = title
-        self.desc = desc
+        self.author = author.stripHTML()
+        self.title = title.stripHTML()
+        self.desc = desc.stripHTML()
         self.imgUrl = imgUrl
         self.shotId = shotId
-        self.username = username
+        self.username = username.stripHTML()
         super.init()
     }
     
@@ -202,12 +202,12 @@ class SessionViewController: UIViewController, UITableViewDelegate, UITableViewD
                     guard title != nil && desc != nil && imgUrl != nil && shotId != nil && author != nil else { continue }
                     
                     // Создаём шот
-                    let newShot = Shot(author: author!.stripHTML(),
-                                       title: title!.stripHTML(),
-                                       desc: desc!.stripHTML(),
+                    let newShot = Shot(author: author!,
+                                       title: title!,
+                                       desc: desc!,
                                        imgUrl: imgUrl!,
                                        shotId: shotId!,
-                                       username: username!.stripHTML()
+                                       username: username!
                     )
 
                     // Записываем шот в реалм
