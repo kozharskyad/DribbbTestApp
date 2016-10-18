@@ -10,6 +10,50 @@ import UIKit
 import Foundation
 import MBProgressHUD
 
+class Shotcomm {
+    var avatar: String?
+    var name: String?
+    var username: String?
+    var dt: String?
+    var comm: String?
+    
+    required init(avatar: String, name: String, username: String, dt: String, comm: String) {
+        self.avatar = avatar
+        self.name = name
+        self.username = username
+        self.dt = dt
+        self.comm = comm
+    }
+}
+
+class ShotcommViewModel {
+    private var shotcomm: Shotcomm
+    
+    var avatarUrl: String {
+        return shotcomm.avatar!
+    }
+    
+    var nameText: String {
+        return (shotcomm.name?.stripHTML())!
+    }
+    
+    var usernameText: String {
+        return (shotcomm.username?.stripHTML())!
+    }
+    
+    var timeDate: String {
+        return (shotcomm.dt?.dateFormatFromTZ())!
+    }
+    
+    var commentText: String {
+        return (shotcomm.comm?.stripHTML())!
+    }
+    
+    required init(shotcomm: Shotcomm) {
+        self.shotcomm = shotcomm
+    }
+}
+
 class CommCustomCell: UITableViewCell {
     @IBOutlet weak var avatar: UIImageView!
     @IBOutlet weak var name: UILabel!
@@ -28,11 +72,7 @@ class CommTableViewController: UIViewController, UITableViewDelegate, UITableVie
     static var shotImage: String = ""
     var keyBoardUpped: Bool = false
     
-    var avatars = [String]()
-    var names = [String]()
-    var dts = [String]()
-    var comms = [String]()
-    var usernames = [String]()
+    var shotcomms = [ShotcommViewModel]()
     
     @IBAction func postButtonTap(_ sender: AnyObject) {
         let loadingNotif = MBProgressHUD.showAdded(to: self.view, animated: true)
@@ -70,7 +110,7 @@ class CommTableViewController: UIViewController, UITableViewDelegate, UITableVie
     }
     
     internal func tableView(_ tableView:UITableView, numberOfRowsInSection section:Int) -> Int {
-        return self.comms.count
+        return self.shotcomms.count
     }
     
     private func numberOfSectionsInTableView(tableView: UITableView) -> Int {
@@ -79,12 +119,14 @@ class CommTableViewController: UIViewController, UITableViewDelegate, UITableVie
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell:CommCustomCell = tableView.dequeueReusableCell(withIdentifier: "CommCell") as! CommCustomCell
-        cell.name.text = self.names[indexPath.row].stripHTML()
+        let shotcommModelView = self.shotcomms[indexPath.row]
+        
+        cell.name.text = shotcommModelView.nameText
         cell.avatar.contentMode = .scaleAspectFill
-        cell.avatar.sd_setImage(with: NSURL(string: self.avatars[indexPath.row]) as! URL)
-        cell.comm.text = self.comms[indexPath.row].stripHTML()
+        cell.avatar.sd_setImage(with: NSURL(string: shotcommModelView.avatarUrl) as! URL)
+        cell.comm.text = shotcommModelView.commentText
         cell.comm.sizeToFit()
-        cell.dt.text = self.dts[indexPath.row].stripHTML().dateFormatFromTZ()
+        cell.dt.text = shotcommModelView.timeDate
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(CommTableViewController.cellAction))
         cell.addGestureRecognizer(tap)
         tap.cancelsTouchesInView = false
@@ -98,7 +140,8 @@ class CommTableViewController: UIViewController, UITableViewDelegate, UITableVie
         }
         let tapLoc = sender.location(in: self.tableView)
         let indexPath = self.tableView.indexPathForRow(at: tapLoc)
-        ProfileViewController.username = self.usernames[(indexPath?.row)!]
+        let shotcommViewModel = self.shotcomms[(indexPath?.row)!]
+        ProfileViewController.username = shotcommViewModel.usernameText
         performSegue(withIdentifier: "commToProfile", sender: self)
     }
     
@@ -148,11 +191,8 @@ class CommTableViewController: UIViewController, UITableViewDelegate, UITableVie
                         comm != nil
                         else { continue }
                     
-                    self.avatars.append(avatar!)
-                    self.names.append(name!)
-                    self.usernames.append(username!)
-                    self.dts.append(dt!)
-                    self.comms.append(comm!)
+                    let newComm = Shotcomm(avatar: avatar!, name: name!, username: username!, dt: dt!, comm: comm!)
+                    self.shotcomms.append(ShotcommViewModel(shotcomm: newComm))
                     
                     self.tableView.reloadData()
                 }
